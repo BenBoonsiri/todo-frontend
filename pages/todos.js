@@ -3,12 +3,13 @@ import styled from 'styled-components';
 import { Colours, Typography } from '../definitions';
 import PageLayout from '../components/PageLayout';
 import apiFetch from '../functions/apiFetch';
-import { Checkbox, List, ListItem, ListItemButton, ListItemIcon, ListItemText, IconButton } from '@mui/material';
+import { Checkbox, List, ListItem, ListItemButton, ListItemIcon, ListItemText, IconButton, Switch } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import dayjs from 'dayjs';
 
 const Todos = () => {
     const [todoItems, setTodoItems] = useState([]);
+    const [hideChecked, setHideChecked] = useState(false);
 
     // Checks completion status in DB
     const handleCheckToggle = async (value) => {
@@ -43,16 +44,23 @@ const Todos = () => {
             setTodoItems(todoItems.filter(obj => obj.todoID !== itemId));
         }
     };
-    
+
+    const todoItemsFiltered = hideChecked ? todoItems.filter((todoItem) => !todoItem.checked) : todoItems;
 
     return (
 
         <PageLayout title="todo list">
             <Container>
                 <div className="content">
-                    <h1>Your ToDo list</h1>
+                    <div className="todo-header">
+                        <h1>Your ToDo list</h1>
+                        <div className="toggle-container">
+                            <div>Hide checked</div>
+                            <Switch onChange={() => setHideChecked(!hideChecked)}/>
+                        </div>
+                    </div>
                     <List sx={{ width: '100%', bgcolor: 'background.paper' }}>
-                    {todoItems.map((item) => {
+                    {todoItemsFiltered.map((item) => {
                         const labelId = `checkbox-list-label-${item}`;
                         return (
 
@@ -96,14 +104,27 @@ const Container = styled.div`
     width: 100%;
 
     .content {
-        h1 {
-            color: ${Colours.BLACK};
-            font-size: ${Typography.HEADING_SIZES.M};
-            font-weight: ${Typography.WEIGHTS.LIGHT};
-            line-height: 2.625rem;
+        .todo-header {
             margin-bottom: 2rem;
             margin-top: 1rem;
-            text-align: left;
+            display: flex;
+            justify-content: space-between;
+
+            h1 {
+                color: ${Colours.BLACK};
+                font-size: ${Typography.HEADING_SIZES.M};
+                font-weight: ${Typography.WEIGHTS.LIGHT};
+                line-height: 2.625rem;
+                text-align: left;
+            }
+
+            .toggle-container {
+                display: flex;
+                gap: 10px;
+                align-items: center;
+                font-size: small;
+            }
+
         }
 
         .MuiListItemText-root {

@@ -76,8 +76,8 @@ const Todos = () => {
                                             <DeleteIcon/>
                                         </IconButton>
                                     </ListItemIcon>
-                                    <ListItemText id={labelId} primary={item.name} />
-                                    <ListItemText style={{textAlign: 'right'}} secondary={dayjs(item.created).format('YYYY-MM-DD')} />
+                                    <ListItemText id={labelId} primary={item.name} style={{textDecoration: item.checked ? 'line-through' : 'none'}}/>
+                                    <ListItemText secondary={dayjs(item.created).format('YYYY-MM-DD')} style={{textAlign: 'right'}}/>
                                 </ListItemButton>
                             </ListItem>
 

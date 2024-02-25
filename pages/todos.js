@@ -3,7 +3,9 @@ import styled from 'styled-components';
 import { Colours, Typography } from '../definitions';
 import PageLayout from '../components/PageLayout';
 import apiFetch from '../functions/apiFetch';
-import { Checkbox, List, ListItem, ListItemButton, ListItemIcon, ListItemText } from '@mui/material';
+import { Checkbox, List, ListItem, ListItemButton, ListItemIcon, ListItemText, IconButton } from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
+import dayjs from 'dayjs';
 
 const Todos = () => {
     const [todoItems, setTodoItems] = useState([]);
@@ -32,13 +34,24 @@ const Todos = () => {
         fetchData();
       }, []);
 
+    const handleDelete = async (itemId) => {
+        let response = await apiFetch("/todo", {
+            body: {"todoID": itemId}, 
+            method: "DELETE"
+        });
+        if (response.status === 200) {
+            setTodoItems(todoItems.filter(obj => obj.todoID !== itemId));
+        }
+    };
+    
+
     return (
 
         <PageLayout title="todo list">
             <Container>
                 <div className="content">
                     <h1>Your ToDo list</h1>
-                    <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
+                    <List sx={{ width: '100%', bgcolor: 'background.paper' }}>
                     {todoItems.map((item) => {
                         const labelId = `checkbox-list-label-${item}`;
                         return (
@@ -59,8 +72,12 @@ const Todos = () => {
                                                 handleCheckToggle(item).then()
                                             }}
                                         />
+                                        <IconButton aria-label="delete" size="small" onClick={() => handleDelete(item.todoID).then()}>
+                                            <DeleteIcon/>
+                                        </IconButton>
                                     </ListItemIcon>
                                     <ListItemText id={labelId} primary={item.name} />
+                                    <ListItemText style={{textAlign: 'right'}} secondary={dayjs(item.created).format('YYYY-MM-DD')} />
                                 </ListItemButton>
                             </ListItem>
 
@@ -89,8 +106,8 @@ const Container = styled.div`
             text-align: left;
         }
 
-        .saveButton {
-            margin-top: 1rem;
+        .MuiListItemText-root {
+            margin-left: 40px;
         }
     }
 `;
